@@ -1,0 +1,81 @@
+# ============================================================
+# Sensitive Guard 规则配置文件
+# 复制为 config.yaml 后填写你的 API Key
+# ============================================================
+
+rules:
+  # ---- 内置规则 ----
+  - name: api_key
+    description: "匹配常见的 API Key 格式"
+    pattern: '(?i)(?:api[_-]?key|apikey|access[_-]?key|secret[_-]?key|token)\s*[:=]\s*[a-zA-Z0-9_\-\.]{8,}'
+    enabled: true
+
+  - name: china_mobile
+    description: "中国手机号（1 开头的 11 位数字）"
+    pattern: '(?<!\d)1[3-9]\d{9}(?!\d)'
+    enabled: true
+
+  - name: password_in_context
+    description: "密码/密钥赋值上下文"
+    pattern: '(?i)(?:password|passwd|pwd|secret)\s*[:=]\s*\S+'
+    enabled: true
+
+  - name: id_card
+    description: "中国大陆 18 位身份证号"
+    pattern: '(?<!\d)[1-9]\d{5}(?:19|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dXx](?!\d)'
+    enabled: true
+
+  - name: bank_card
+    description: "银行卡号（16-19 位数字）"
+    pattern: '(?<!\d)(?:62|60|58|56|55|54|53|52|51|50|49|48|47|46|45|44|43|42|41|40)\d{14,17}(?!\d)'
+    enabled: true
+
+  - name: email
+    description: "电子邮箱"
+    pattern: '[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}'
+    enabled: true
+
+  - name: ip_address
+    description: "IPv4 地址"
+    pattern: '(?<!\d)(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)(?!\d)'
+    enabled: true
+
+  - name: jwt_token
+    description: "JWT Token"
+    pattern: 'eyJ[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+'
+    enabled: true
+
+  - name: bearer_token
+    description: "Bearer Token"
+    pattern: '(?i)bearer\s+[a-zA-Z0-9_\-\.]+'
+    enabled: true
+
+  - name: private_key_header
+    description: "私钥 PEM 头"
+    pattern: '-----BEGIN\s+(?:RSA|EC|DSA|OPENSSH|PGP)\s+PRIVATE\s+KEY-----'
+    enabled: true
+
+# ---- 自定义规则（可追加） ----
+#   - name: custom_rule
+#     description: "自定义规则描述"
+#     pattern: '...'
+#     enabled: true
+
+# ---- 敏感词词典（精确匹配） ----
+sensitive_words: []
+
+# ---- 检测后行为 ----
+behavior:
+  replacement_strategy: "placeholder"
+  placeholder_prefix: "__PH_SENSITIVE_"
+  mask_char: "*"
+  mapping_db_path: "~/.sensitive_guard/mappings.db"
+
+# ---- Agent 自修正配置 ----
+agent:
+  llm_provider: "openai"
+  api_base_url: "https://api.deepseek.com"
+  api_key: "${DEEPSEEK_API_KEY}"    # 设置环境变量或直接填写
+  model: "deepseek-chat"
+  confidence_threshold: 0.7
+  max_retries: 3
