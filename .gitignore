@@ -20,4 +20,4 @@ uv.lock
 .sensitive_guard/
 
 # Config with API key (use config.yaml.example instead)
-# config.yaml
+config.yaml
