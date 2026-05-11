@@ -12,6 +12,10 @@ uv pip install -e .
 
 ## 配置
 
+```bash
+cp config.yaml.example config.yaml
+```
+
 编辑 `config.yaml`，设置 LLM API：
 
 ```yaml
